@@ -1,0 +1,9 @@
+186679 occurrences were loaded.
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/plankton.csv
+
+Enriching with  sst
+
+186679 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Read error in netCDF file. If local file, try restoring a backup [{'min': 5072, 'max': 5072, 'step': 1, 'best': 5072}, {'min': 2711, 'max': 2752, 'step': 1, 'best': 2731}, {'min': 3532, 'max': 3593, 'step': 1, 'best': 3563}]
+Error with sst  :  'NoneType' object has no attribute 'shape'

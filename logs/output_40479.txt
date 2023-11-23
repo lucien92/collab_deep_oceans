@@ -1,0 +1,11 @@
+186679 occurrences were loaded.
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Dinophysis acuminata.csv
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Karenia mikimotoi.csv
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Chaetoceros.csv
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Dinophysis.csv
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Alexandrium minutum.csv
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Pseudo-nitzschia.csv
+
+Enriching with  salinity3d
+
+Error with salinity3d  :  [Errno 2] No such file or directory: '/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/Salinity-config.json'
