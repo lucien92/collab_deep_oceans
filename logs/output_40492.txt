@@ -1,7 +1,0 @@
-186679 occurrences were loaded.
-Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/plankton.csv
-
-Enriching with  sst
-
-186679 occurrences were loaded from enrichment file
-Ignoring 0 rows because data is not available at these dates
