@@ -1,2 +1,2 @@
-./logs/error_*.txt
-./logs/output-*.txt
+!./logs/error_*.txt
+!./logs/output_*.txt
