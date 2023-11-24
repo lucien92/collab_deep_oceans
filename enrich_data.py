@@ -5,22 +5,22 @@ from geoenrich.enrichment import *
 from geoenrich.exports import *
 
 
-taxons = [
-    "Dinophysis acuminata",
-    "Karenia mikimotoi",
-    "Chaetoceros",
-    "Dinophysis", 
-    "Alexandrium minutum",
-    "Pseudo-nitzschia"
-]
+# taxons = [
+#     "Dinophysis acuminata",
+#     "Karenia mikimotoi",
+#     "Chaetoceros",
+#     "Dinophysis", 
+#     "Alexandrium minutum",
+#     "Pseudo-nitzschia"
+# ]
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('plankton_data/planktons.csv')
+    df = pd.read_csv('plankton_data/planktons_med.csv')
 
     # Import those occurrnces :
     geodf = import_occurrences_csv(
-        path = 'plankton_data/planktons.csv', 
+        path = 'plankton_data/planktons_med.csv', 
         id_col = 'index', 
         date_col = 'datetime', 
         lat_col = 'lat',
@@ -28,17 +28,23 @@ if __name__ == "__main__":
         )
 
     # Create the enrichment file
-    create_enrichment_file(geodf, "plankton")
+    create_enrichment_file(geodf, "plankton_med")
 
     variables = [
-        # 'sst',
-        # 'salinity3d'
-        # 'oxygen', 
-        # 'oxygen2', 
-        # 'chlorophyll',
-        # 'phosphate',
-        # 'nitrate',
-        'carbon-dissolved-inorganic',
+        'sst',
+        'salinity3d',
+        'oxygen', 
+        'oxygen2', 
+        'chlorophyll',
+        'phosphate',
+        'nitrate',
+        'nh4_med',
+        'no3_med',
+        'po4_med',
+        'o2_med',
+        'chl_med',
+        'thetao_med',
+        'so_med',
         ]
 
     for variable in variables:
@@ -50,11 +56,18 @@ if __name__ == "__main__":
         geo_buff = 115
         time_buff = (0, 0)
         n = df.shape[0]
+
+        # try:
+        #     enrich(dataset_ref = 'plankton_med', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (0, 1000))
+        # except Exception as e:
+        #     print("Error with", variable, " : ", e)
+        #     pass
+
         for i in range(n//10000):
-            if variable != variables[0] or i >= 15: # Skip what we already downloaded
+            if variable != variables[0] or i >= 0: # Skip what we already downloaded
                 print("Enriching ", i*10000, " to ", (i+1)*10000)
                 try:
-                    enrich(dataset_ref = 'plankton', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (i*10000, (i+1)*10000))
+                    enrich(dataset_ref = 'plankton_med', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (i*10000, (i+1)*10000))
                 except Exception as e:
                     print("Error with", variable, " : ", e)
                     pass

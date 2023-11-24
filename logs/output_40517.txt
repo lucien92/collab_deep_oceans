@@ -1,0 +1,78 @@
+62275 occurrences were loaded.
+File saved at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/plankton_med.csv
+
+Enriching with  sst
+
+186679 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  salinity3doxygen
+
+186679 occurrences were loaded from enrichment file
+Error with salinity3doxygen  :  'salinity3doxygen'
+
+Enriching with  oxygen2
+
+186679 occurrences were loaded from enrichment file
+Ignoring 1000 rows because data is not available at these dates
+No data in input dataframe.
+
+Enriching with  chlorophyll
+
+186679 occurrences were loaded from enrichment file
+Ignoring 533 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  phosphate
+
+186679 occurrences were loaded from enrichment file
+Ignoring 259 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  nitrate
+
+186679 occurrences were loaded from enrichment file
+Ignoring 259 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  nh4_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 646 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  no3_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 646 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  po4_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 646 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  o2_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 646 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  chl_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 646 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  thetao_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  so_med
+
+186679 occurrences were loaded from enrichment file
+Error with so_med  :  [Errno -72] NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response: b'https://nibanez:19641701Cs@my.cmems-du.eu/thredds/dodsC/med-cmcc-sal-rean-d.html'

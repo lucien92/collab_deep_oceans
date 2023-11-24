@@ -1,0 +1,8 @@
+62275 occurrences were loaded.
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/plankton_med.csv
+
+Enriching with  so_med
+
+186679 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over

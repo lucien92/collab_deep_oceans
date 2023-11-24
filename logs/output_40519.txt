@@ -1,0 +1,381 @@
+62275 occurrences were loaded.
+Abort. File already exists at /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/plankton_geoenrich_data/biodiv/plankton_med.csv
+
+Enriching with  sst
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  salinity3d
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 574 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 816 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 237 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 1427 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  oxygen
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 574 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 816 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 234 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 1510 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 373 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 391 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  oxygen2
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 10000 rows because data is not available at these dates
+No data in input dataframe.
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 10000 rows because data is not available at these dates
+No data in input dataframe.
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 10000 rows because data is not available at these dates
+No data in input dataframe.
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 9899 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 9571 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 9538 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  chlorophyll
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 1623 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 1636 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 840 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3339 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  phosphate
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 574 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 816 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 234 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 1423 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  nitrate
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 574 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 816 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 234 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 1423 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  nh4_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 2305 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 2293 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 1235 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3939 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  no3_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 2305 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 2293 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 1235 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3939 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  po4_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 2305 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 2293 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 1235 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3939 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  o2_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 2305 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 2293 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 1235 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3939 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  chl_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 2305 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 2293 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 1235 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 3939 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
+
+Enriching with  thetao_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 45 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Read error in netCDF file. If local file, try restoring a backup [{'min': 10441, 'max': 10441, 'step': 1, 'best': 10441}, {'min': 0, 'max': 0, 'best': 0, 'step': 1}, {'min': 296, 'max': 346, 'step': 1, 'best': 321}, {'min': 208, 'max': 277, 'step': 1, 'best': 242}]
+Error with thetao_med  :  'NoneType' object has no attribute 'shape'
+
+Enriching with  so_med
+
+Enriching  0  to  10000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Read error in netCDF file. If local file, try restoring a backup [{'min': 4799, 'max': 4799, 'step': 1, 'best': 4799}, {'min': 0, 'max': 0, 'best': 0, 'step': 1}, {'min': 280, 'max': 329, 'step': 1, 'best': 304}, {'min': 183, 'max': 252, 'step': 1, 'best': 217}]
+Error with so_med  :  'NoneType' object has no attribute 'shape'
+Enriching  10000  to  20000
+62275 occurrences were loaded from enrichment file
+Error with so_med  :  [Errno -90] NetCDF: file not found: b'https://nibanez:19641701Cs@my.cmems-du.eu/thredds/dodsC/med-cmcc-sal-rean-d'
+Enriching  20000  to  30000
+62275 occurrences were loaded from enrichment file
+Ignoring 0 rows because data is not available at these dates
+Enrichment over
+Enriching  30000  to  40000
+62275 occurrences were loaded from enrichment file
+Ignoring 45 rows because data is not available at these dates
+Enrichment over
+Enriching  40000  to  50000
+62275 occurrences were loaded from enrichment file
+Ignoring 198 rows because data is not available at these dates
+Enrichment over
+Enriching  50000  to  60000
+62275 occurrences were loaded from enrichment file
+Ignoring 199 rows because data is not available at these dates
+Enrichment over
