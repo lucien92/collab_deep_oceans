@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=enrich_data
+#SBATCH --job-name=nan_ratios
 #SBATCH --output=logs/output_%j.txt
 #SBATCH --error=logs/error_%j.txt
 #SBATCH --time=08:00:00
