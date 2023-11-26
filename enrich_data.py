@@ -32,12 +32,6 @@ if __name__ == "__main__":
 
     variables = [
         'sst',
-        'salinity3d',
-        'oxygen', 
-        'oxygen2', 
-        'chlorophyll',
-        'phosphate',
-        'nitrate',
         'nh4_med',
         'no3_med',
         'po4_med',
@@ -63,14 +57,17 @@ if __name__ == "__main__":
         #     print("Error with", variable, " : ", e)
         #     pass
 
-        for i in range(n//10000):
-            if variable != variables[0] or i >= 0: # Skip what we already downloaded
-                print("Enriching ", i*10000, " to ", (i+1)*10000)
-                try:
-                    enrich(dataset_ref = 'plankton_med', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (i*10000, (i+1)*10000))
-                except Exception as e:
-                    print("Error with", variable, " : ", e)
-                    pass
+        i = n//10000
+        enrich(dataset_ref = 'plankton_med', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (i*10000, (i+1)*10000))
+
+        # for i in range(n//10000):
+        #     if variable != variables[0] or i >= 5: # Skip what we already downloaded
+        #         print("Enriching ", i*10000, " to ", (i+1)*10000)
+        #         try:
+        #             enrich(dataset_ref = 'plankton_med', var_id = var_id, geo_buff = geo_buff, time_buff = time_buff, slice = (i*10000, (i+1)*10000))
+        #         except Exception as e:
+        #             print("Error with", variable, " : ", e)
+        #             pass
 
 
 

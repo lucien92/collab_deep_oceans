@@ -17,4 +17,4 @@
 source /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/deep-sdm-venv/bin/activate
 
 # Run your Python script
-python enrich_data.py
+python compute_nan_ratios.py

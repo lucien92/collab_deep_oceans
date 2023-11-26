@@ -8,3 +8,11 @@ https://data.marine.copernicus.eu/product/NWSHELF_MULTIYEAR_BGC_004_011/services
 
 Pour le nitrite (NO2-), le silanol (SIOH) et l'ammonium (NH4+) etc.
 
+
+https://data.marine.copernicus.eu/product/MEDSEA_MULTIYEAR_BGC_006_008/description
+
+
+
+
+https://data.marine.copernicus.eu/product/MEDSEA_MULTIYEAR_PHY_006_004/description
+
