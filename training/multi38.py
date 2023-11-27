@@ -199,8 +199,11 @@ class Multi38DataModule(BaseDataModule):
         ignore_indices: list = [],
         pin_memory: bool = True,
     ):
-        super().__init__(pin_memory, train_batch_size, inference_batch_size, num_workers)
+        super().__init__(pin_memory)
         self.dataset_path = dataset_path
+        self.train_batch_size = train_batch_size
+        self.inference_batch_size = inference_batch_size
+        self.num_workers = num_workers
         self.ignore_indices = ignore_indices
         self.dataset_name = dataset_name
         
@@ -342,6 +345,8 @@ def main(cfg: DictConfig) -> None:
     logger.log_hyperparams(cfg)
 
     print("Initializing data module...")  # Debug print
+    # Enumerate the args **cfg.data
+    print("Data module args: ", cfg.data)  # Debug print
     datamodule = Multi38DataModule(**cfg.data)
     
     if cfg.other.train_from_checkpoint:
@@ -359,7 +364,7 @@ def main(cfg: DictConfig) -> None:
         ModelCheckpoint(
             dirpath=os.getcwd(),
             filename="checkpoint-{epoch:02d}--{val_f1:.4f}",
-            monitor="val_f1",
+            monitor="val_mse",
             mode="max",
         ),
     ]

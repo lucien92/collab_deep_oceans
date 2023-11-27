@@ -20,7 +20,6 @@ model:
     change_last_layer:
       num_outputs: 6
       flatten: false
-      softmax: false
       # softmax: true
     change_first_convolutional_layer:
     # Nb of features
