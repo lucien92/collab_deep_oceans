@@ -47,6 +47,9 @@ class Multi38Dataset(Dataset):
         target_transform=None,
         ignore_indices=[],
     ):
+        
+        print("Initializing Multi38Dataset...")  # Debug print
+        print("Root: ", root)  # Debug print
         root = Path(root)
 
         self.root = root
@@ -56,13 +59,14 @@ class Multi38Dataset(Dataset):
         self.ignore_indices = ignore_indices
         self.dataset_name = dataset_name
 
+
+        print(f"Loading data from {root / dataset_name}")  # Debug print
         df = pd.read_csv(
             root / dataset_name,
-            index_col="id",
+            index_col="index",
         )
 
-        file = (self.root / 'species.csv').open()
-        species = list(csv.DictReader(file))
+        species = df['taxon']
         
         self.species_index = {x['id']:int(x['index']) for x in species}
         
@@ -73,7 +77,9 @@ class Multi38Dataset(Dataset):
         df = df.loc[ind]
 
         self.observation_ids = df.index
-        self.targets = df["species"].values
+        self.targets = df["value"].values
+        print(f"Dataset initialized with {len(self.observation_ids)} observations.")  # Debug print
+
 
     def __len__(self):
         """Returns the number of observations in the dataset."""
@@ -83,20 +89,26 @@ class Multi38Dataset(Dataset):
         observation_id = self.observation_ids[index]
         
         species = self.targets[index]
-        patches = self.load_patch(observation_id, self.root / 'npy-norm' / (species + '-norm-npy'))
+
+        # Might need to be changed
+        patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm')
 
         if self.transform:
             patches = self.transform(patches)
 
         assert not(torch.isnan(patches).any())
 
-        species_target = self.targets[index]
-        zeros = [0]*38
+        # Modified for regression
+        species_density = self.targets[index]
+        target = torch.tensor([species_density]).float()
+
+        # species_target = self.targets[index]
+        # zeros = [0]*38
         
-        if species_target in self.species_index:
-            zeros[self.species_index[species_target]] = 1
+        # if species_target in self.species_index:
+        #     zeros[self.species_index[species_target]] = 1
             
-        target = torch.tensor(zeros).float()
+        # target = torch.tensor(zeros).float()
 
         if self.target_transform:
             target = self.target_transform(target)
@@ -119,11 +131,13 @@ class Multi38Dataset(Dataset):
         patches : dict containing 2d array-like objects
             Returns a dict containing the requested patches.
         """
+        print(f"Loading patch for observation ID: {observation_id}")  # Debug print
         filename = Path(patches_path) / str(observation_id)
 
         patches = {}
 
         patch25_filename = filename.with_name(filename.stem + ".npy")
+        print(f"Loading patch file from {patch25_filename}")  # Debug print
         patch25 = np.load(patch25_filename)
         
 
@@ -208,9 +222,10 @@ class Multi38DataModule(BaseDataModule):
         return dataset
 
 
-class Multi38ClassificationSystem(GenericPredictionSystem):
+# class Multi38ClassificationSystem(GenericPredictionSystem):
+class Multi38RegressionSystem(GenericPredictionSystem):
     r"""
-    Basic finetuning classification system.
+    Basic finetuning regression system.
 
     Parameters
     ----------
@@ -248,29 +263,45 @@ class Multi38ClassificationSystem(GenericPredictionSystem):
             nesterov=self.nesterov,
         )
 
-        loss = torch.nn.BCELoss(weight=weight)
-        #loss = torch.nn.BCELoss()
+        if metrics is None:
+            metrics = {
+                "mae": Fmetrics.mean_absolute_error,
+                "rmse": lambda preds, target: torch.sqrt(Fmetrics.mean_squared_error(preds, target)),
+            }
+
+        # To change
+        loss = torch.nn.MSELoss()
+
+        # loss = torch.nn.BCELoss(weight=weight)
+        # loss = torch.nn.BCELoss()
 
         super().__init__(model, loss, optimizer, metrics)
     
 
 
-class ClassificationSystem(Multi38ClassificationSystem):
+# class ClassificationSystem(Multi38ClassificationSystem):
+class RegressionSystem(Multi38RegressionSystem):
     def __init__(
         self,
         model: dict,
         lr: float,
         weight_decay: float,
         momentum: float,
-        nesterov: bool,
-        loss_weights: list,
+        nesterov: bool
     ):
+        # metrics = {
+        #     "acc": Fmetrics.classification.binary_accuracy,
+        #     "f1": Fmetrics.classification.binary_f1_score,
+        #     #"cm": Fmetrics.classification.binary_confusion_matrix,
+        #     "jac": Fmetrics.classification.binary_jaccard_index,
+        # }
+
         metrics = {
-            "acc": Fmetrics.classification.binary_accuracy,
-            "f1": Fmetrics.classification.binary_f1_score,
-            #"cm": Fmetrics.classification.binary_confusion_matrix,
-            "jac": Fmetrics.classification.binary_jaccard_index,
+            "mse": Fmetrics.regression.mean_squared_error,
         }
+
+        # To change with provided loss
+        loss = torch.nn.MSELoss()
 
         super().__init__(
             model,
@@ -278,8 +309,7 @@ class ClassificationSystem(Multi38ClassificationSystem):
             weight_decay,
             momentum,
             nesterov,
-            metrics,
-            weight = torch.Tensor(loss_weights),
+            metrics
         )
 
 
@@ -297,9 +327,9 @@ def main(cfg: DictConfig) -> None:
     
     if cfg.other.train_from_checkpoint:
         ckpt_path = cfg.other.ckpt_path + cfg.other.ckpt_name
-        model = ClassificationSystem.load_from_checkpoint(ckpt_path, model=cfg.model, **cfg.optimizer)
+        model = RegressionSystem.load_from_checkpoint(ckpt_path, model=cfg.model, **cfg.optimizer)
     else:
-        model = ClassificationSystem(cfg.model, **cfg.optimizer)
+        model = RegressionSystem(cfg.model, **cfg.optimizer)
 
 
 
@@ -330,7 +360,7 @@ def main(cfg: DictConfig) -> None:
 def predict(cfg: DictConfig) -> list:
 
     datamodule = Multi38DataModule(**cfg.data)
-    model = ClassificationSystem(cfg.model, **cfg.optimizer)
+    model = RegressionSystem(cfg.model, **cfg.optimizer)
     trainer = pl.Trainer(**cfg.trainer)
 
     ckpt_path = cfg.other.ckpt_path + cfg.other.ckpt_name
@@ -343,7 +373,7 @@ def predict(cfg: DictConfig) -> list:
 def test(cfg: DictConfig) -> list:
 
     datamodule = Multi38DataModule(**cfg.data)
-    model = ClassificationSystem(cfg.model, **cfg.optimizer)
+    model = RegressionSystem(cfg.model, **cfg.optimizer)
     trainer = pl.Trainer(**cfg.trainer)
 
     ckpt_path = cfg.other.ckpt_path + cfg.other.ckpt_name
