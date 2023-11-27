@@ -77,9 +77,18 @@ class Multi38Dataset(Dataset):
             ind = df.index[np.isin(df["subset"], ["train", "val"])]
         df = df.loc[ind]
 
+        taxons = [
+            "Dinophysis acuminata",
+            "Karenia mikimotoi",
+            "Chaetoceros",
+            "Dinophysis", 
+            "Alexandrium minutum",
+            "Pseudo-nitzschia"
+        ]
+
         # GOOD
         self.observation_ids = df.index
-        self.targets = np.array(df["taxons"].values)
+        self.targets = df[taxons].values
 
         print("Shape of target:", self.targets.shape)  # Debug print
 
@@ -105,7 +114,7 @@ class Multi38Dataset(Dataset):
 
         # Modified for regression
         species_density = self.targets[index]
-        target = torch.tensor([species_density]).float()
+        target = torch.tensor(species_density).float()
 
         # species_target = self.targets[index]
         # zeros = [0]*38
@@ -136,13 +145,13 @@ class Multi38Dataset(Dataset):
         patches : dict containing 2d array-like objects
             Returns a dict containing the requested patches.
         """
-        print(f"Loading patch for observation ID: {observation_id}")  # Debug print
+        # print(f"Loading patch for observation ID: {observation_id}")  # Debug print
         filename = Path(patches_path) / str(observation_id)
 
         patches = {}
 
         patch25_filename = filename.with_name(filename.stem + ".npy")
-        print(f"Loading patch file from {patch25_filename}")  # Debug print
+        # print(f"Loading patch file from {patch25_filename}")  # Debug print
         patch25 = np.load(patch25_filename)
         
 
@@ -320,23 +329,31 @@ class RegressionSystem(Multi38RegressionSystem):
 @hydra.main(version_base="1.1", config_path="conf", config_name="multi38_config")
 def main(cfg: DictConfig) -> None:
 
+    print("Setting number of threads...")  # Debug print    
     torch.set_num_threads(32)
     
+    print("Determining run path...")  # Debug print
     run_path = Path.cwd()
+    print(f"Run path: {run_path}")  # Debug print
+
+    print("Setting up logger...")  # Debug print
     logger = pl.loggers.TensorBoardLogger(save_dir=run_path.parent, name='', version = run_path.stem,
                                             sub_dir='logs', default_hp_metric = False)
     logger.log_hyperparams(cfg)
 
+    print("Initializing data module...")  # Debug print
     datamodule = Multi38DataModule(**cfg.data)
     
     if cfg.other.train_from_checkpoint:
+        print("Loading model from checkpoint...")  # Debug print
         ckpt_path = cfg.other.ckpt_path + cfg.other.ckpt_name
         model = RegressionSystem.load_from_checkpoint(ckpt_path, model=cfg.model, **cfg.optimizer)
     else:
+        print("Initializing model...")  # Debug print
         model = RegressionSystem(cfg.model, **cfg.optimizer)
 
 
-
+    print("Setting up callbacks...")  # Debug print
     callbacks = [
         Summary(),
         ModelCheckpoint(
@@ -346,9 +363,15 @@ def main(cfg: DictConfig) -> None:
             mode="max",
         ),
     ]
+    print("Initializing trainer...")  # Debug print
     trainer = pl.Trainer(logger=logger, callbacks=callbacks, **cfg.trainer)
+    print("")
+    print("Starting training...")  # Debug print
+    print("")
     trainer.fit(model, datamodule=datamodule)
-
+    print("")
+    print("Starting validation...")  # Debug print
+    print("")
     trainer.validate(model, datamodule=datamodule)
 
     
