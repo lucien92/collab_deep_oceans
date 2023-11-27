@@ -34,12 +34,13 @@ optimizer:
   # loss_weights: [9998, 9991, 8908, 2022, 9999, 9986, 4855, 9996, 705, 2767, 9996, 9992, 2446, 2160, 9991, 9998, 9993, 10000, 6240, 9973, 1064, 7928, 9974, 9980, 9996, 9973, 9952, 7394, 9974, 9984, 9937, 9963, 9835, 9941, 9721, 9981, 9964, 8676]
 
 data:
-  dataset_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/plankton_data/"
-  dataset_name: "planktons_med.csv"
+  dataset_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/"
+  dataset_name: "plankton_data/planktons_med_filtered.csv"
   train_batch_size: 256
   inference_batch_size: 32
   num_workers: 16
-  ignore_indices: [11, 21, 22, 23, 24]
+  ignore_indices : []
+  # ignore_indices: [11, 21, 22, 23, 24] For feature selection
   pin_memory: true
 
 other:

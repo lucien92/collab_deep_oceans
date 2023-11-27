@@ -49,6 +49,8 @@ class Multi38Dataset(Dataset):
     ):
         
         print("Initializing Multi38Dataset...")  # Debug print
+        print("Subset: ", subset)  # Debug print
+        print("Ignore indices: ", ignore_indices)  # Debug print
         print("Root: ", root)  # Debug print
         root = Path(root)
 
@@ -66,9 +68,8 @@ class Multi38Dataset(Dataset):
             index_col="index",
         )
 
-        species = df['taxon']
-        
-        self.species_index = {x['id']:int(x['index']) for x in species}
+        # species = df['taxon']
+        # self.species_index = {x['id']:int(x['index']) for x in species}
         
         if subset != "train+val":
             ind = df.index[df["subset"] == subset]
@@ -76,8 +77,12 @@ class Multi38Dataset(Dataset):
             ind = df.index[np.isin(df["subset"], ["train", "val"])]
         df = df.loc[ind]
 
+        # GOOD
         self.observation_ids = df.index
-        self.targets = df["value"].values
+        self.targets = np.array(df["taxons"].values)
+
+        print("Shape of target:", self.targets.shape)  # Debug print
+
         print(f"Dataset initialized with {len(self.observation_ids)} observations.")  # Debug print
 
 
@@ -143,7 +148,6 @@ class Multi38Dataset(Dataset):
 
         for i in self.ignore_indices:
             patch25[...,i] = 0   
-
 
         # # Test with summary values
         # av, std = np.average(patch25, (0,1)), np.std(patch25, (0,1))
