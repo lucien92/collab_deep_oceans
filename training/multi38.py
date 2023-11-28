@@ -6,6 +6,8 @@ import pandas as pd
 import csv
 
 import torch
+import torch.nn as nn
+import torchmetrics
 from torch.utils.data import Dataset
 import hydra
 from omegaconf import DictConfig
@@ -14,6 +16,9 @@ import pytorch_lightning as pl
 import torchmetrics.functional as Fmetrics
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torchvision import transforms
+import wandb
+from pytorch_lightning.loggers import WandbLogger
+
 
 from malpolon.data.data_module import BaseDataModule
 from malpolon.models import GenericPredictionSystem
@@ -88,7 +93,9 @@ class Multi38Dataset(Dataset):
 
         # GOOD
         self.observation_ids = df.index
-        self.targets = df[taxons].values
+        # self.targets = df[taxons].values
+        # Simpler task : 
+        self.targets = df['total plankton'].values
 
         print("Shape of target:", self.targets.shape)  # Debug print
 
@@ -114,7 +121,8 @@ class Multi38Dataset(Dataset):
 
         # Modified for regression
         species_density = self.targets[index]
-        target = torch.tensor(species_density).float()
+        target = torch.tensor([species_density]).float()
+        # target = torch.tensor(species_density).float()
 
         # species_target = self.targets[index]
         # zeros = [0]*38
@@ -237,6 +245,55 @@ class Multi38DataModule(BaseDataModule):
         )
         return dataset
 
+class MeanLogarithmicError(torchmetrics.Metric):
+    def __init__(self, dist_sync_on_step=False):
+        super().__init__(dist_sync_on_step=dist_sync_on_step)
+
+        self.add_state("sum_log_errors", default=torch.tensor(0.0), dist_reduce_fx="sum")
+        self.add_state("total", default=torch.tensor(0), dist_reduce_fx="sum")
+
+    def update(self, preds: torch.Tensor, target: torch.Tensor):
+        # Ensure that predictions and targets have the same shape
+        preds, target = self._input_format(preds, target)
+        
+        # Calculate the absolute errors
+        absolute_errors = torch.abs(preds - target)
+        
+        # Apply the max operation to ensure no log(0) occurs
+        max_values = torch.maximum(absolute_errors, torch.tensor(1.0))
+        
+        # Calculate the log of max values using log base 10
+        log_errors = torch.log10(max_values)
+        
+        # Update metric states
+        self.sum_log_errors += torch.sum(log_errors)
+        self.total += target.numel()
+
+    def compute(self):
+        # Compute the final mean logarithmic error
+        return self.sum_log_errors / self.total
+
+    def _input_format(self, preds: torch.Tensor, target: torch.Tensor):
+        if preds.ndim > target.ndim:
+            target = target.view_as(preds)
+        elif target.ndim > preds.ndim:
+            preds = preds.view_as(target)
+        
+        return preds, target
+
+class MeanLogarithmicErrorLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, y_pred, y_true):
+        absolute_errors = torch.abs(y_pred - y_true)
+        max_values = torch.maximum(absolute_errors, torch.tensor(1.0))
+        log_errors = torch.log10(max_values)
+        mean_log_error = torch.mean(log_errors)
+        
+        return mean_log_error
+
+
 
 # class Multi38ClassificationSystem(GenericPredictionSystem):
 class Multi38RegressionSystem(GenericPredictionSystem):
@@ -285,11 +342,16 @@ class Multi38RegressionSystem(GenericPredictionSystem):
                 "rmse": lambda preds, target: torch.sqrt(Fmetrics.mean_squared_error(preds, target)),
             }
 
-        # To change
-        loss = torch.nn.MSELoss()
 
-        # loss = torch.nn.BCELoss(weight=weight)
-        # loss = torch.nn.BCELoss()
+        # Custom loss
+        custom_loss = MeanLogarithmicErrorLoss()
+
+        # Cast the custom loss to nn.modules.loss._Loss
+        loss = nn.modules.loss._Loss()
+        loss.__dict__ = custom_loss.__dict__
+
+        # loss = nn.BCELoss(weight=weight)
+        # loss = nn.BCELoss()
 
         super().__init__(model, loss, optimizer, metrics)
     
@@ -314,10 +376,12 @@ class RegressionSystem(Multi38RegressionSystem):
 
         metrics = {
             "mse": Fmetrics.regression.mean_squared_error,
+            "mle": MeanLogarithmicError().to('cuda'),
         }
 
         # To change with provided loss
-        loss = torch.nn.MSELoss()
+        # loss = nn.MSELoss()
+        # loss = MeanLogarithmicErrorLoss()
 
         super().__init__(
             model,
@@ -327,6 +391,20 @@ class RegressionSystem(Multi38RegressionSystem):
             nesterov,
             metrics
         )
+    
+    def training_step(self, batch, batch_idx):
+        inputs, targets = batch
+        predictions = self(inputs)
+        self.log('train_mse', self.metrics['mse'](predictions, targets))
+        self.log('train_mle', self.metrics['mle'](predictions, targets))
+        # print(f"Training Step - Batch {batch_idx}: Predictions: {predictions}, Targets: {targets}")
+
+    def validation_step(self, batch, batch_idx):
+        inputs, targets = batch
+        predictions = self(inputs)
+        self.log('val_mse', self.metrics['mse'](predictions, targets))
+        self.log('val_mle', self.metrics['mle'](predictions, targets))
+        # print(f"Validation Step - Batch {batch_idx}: Predictions: {predictions}, Targets: {targets}")
 
 
 @hydra.main(version_base="1.1", config_path="conf", config_name="multi38_config")
@@ -340,8 +418,16 @@ def main(cfg: DictConfig) -> None:
     print(f"Run path: {run_path}")  # Debug print
 
     print("Setting up logger...")  # Debug print
-    logger = pl.loggers.TensorBoardLogger(save_dir=run_path.parent, name='', version = run_path.stem,
-                                            sub_dir='logs', default_hp_metric = False)
+    logger = pl.loggers.TensorBoardLogger(
+        save_dir=run_path.parent, 
+        name='', 
+        version = run_path.stem,
+        sub_dir='logs', 
+        default_hp_metric = False
+        )
+    
+    print(f"TensorBoard logs will be saved in: {logger.log_dir}")
+    
     logger.log_hyperparams(cfg)
 
     print("Initializing data module...")  # Debug print
@@ -368,7 +454,13 @@ def main(cfg: DictConfig) -> None:
             mode="max",
         ),
     ]
+
+    
+    wandb.init(project="deep-ocean", name = 'Target : total plankton')
     print("Initializing trainer...")  # Debug print
+
+    logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
+
     trainer = pl.Trainer(logger=logger, callbacks=callbacks, **cfg.trainer)
     print("")
     print("Starting training...")  # Debug print
@@ -378,6 +470,8 @@ def main(cfg: DictConfig) -> None:
     print("Starting validation...")  # Debug print
     print("")
     trainer.validate(model, datamodule=datamodule)
+
+    wandb.finish()
 
     
 
@@ -398,7 +492,7 @@ def predict(cfg: DictConfig) -> list:
     ckpt_path = cfg.other.ckpt_path + cfg.other.ckpt_name
     predictions = trainer.predict(model, datamodule=datamodule, ckpt_path=ckpt_path)
   
-    return(torch.cat(predictions).numpy())
+    return(nn.cat(predictions).numpy())
 
 
 

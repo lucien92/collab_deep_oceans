@@ -18,7 +18,7 @@ model:
    # dropout: 0.3
   modifiers:
     change_last_layer:
-      num_outputs: 6
+      num_outputs: 1
       flatten: false
       # softmax: true
     change_first_convolutional_layer:
@@ -44,6 +44,6 @@ data:
 
 other:
   train_from_checkpoint: false
-  ckpt_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_32/deep-sdm-oceans-1/outputs/multi38/"
+  ckpt_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/collab_deep_oceans/training/ckpt/"
   ckpt_name: "2023-07-24_07-49-49/checkpoint-epoch=08--val_f1=0.6036.ckpt"
   comment: "Removed time lag and without eke for interpretation study - continue training"
