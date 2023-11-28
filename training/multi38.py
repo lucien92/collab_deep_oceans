@@ -349,7 +349,6 @@ class Multi38RegressionSystem(GenericPredictionSystem):
         # Cast the custom loss to nn.modules.loss._Loss
         loss = nn.modules.loss._Loss()
         loss.__dict__ = custom_loss.__dict__
-
         # loss = nn.BCELoss(weight=weight)
         # loss = nn.BCELoss()
 
