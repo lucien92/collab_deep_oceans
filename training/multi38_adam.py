@@ -27,17 +27,6 @@ from malpolon.logging import Summary
 
 from transforms import RGBDataTransform
 
-from torchvision.transforms.functional import rotate
-
-class CustomRotationTransform:
-    """ Custom rotation transform to rotate image by one of the given angles. """
-    def __init__(self, angles):
-        self.angles = angles
-
-    def __call__(self, x):
-        angle = float(np.random.choice(self.angles))
-        return rotate(x, angle)
-
 class Multi38Dataset(Dataset):
     """Pytorch dataset handler for a subset of GeoLifeCLEF 2022 dataset.
     It consists in a restriction to France and to the 100 most present plant species.
@@ -106,9 +95,7 @@ class Multi38Dataset(Dataset):
         self.observation_ids = df.index
         # self.targets = df[taxons].values
         # Simpler task : 
-        # self.targets = df['total plankton'].values
-        # Simpler task (only the)
-        self.targets = df['Pseudo-nitzschia'].values
+        self.targets = df['total plankton'].values
 
         print("Shape of target:", self.targets.shape)  # Debug print
 
@@ -233,8 +220,7 @@ class Multi38DataModule(BaseDataModule):
     def train_transform(self):
         return transforms.Compose(
             [
-                lambda data: RGBDataTransform()(data["25"]),
-                CustomRotationTransform(angles=[0, 90, 180, 270])  # Add custom rotation
+                lambda data: RGBDataTransform()(data["25"])
             ]
         )
 
@@ -342,12 +328,18 @@ class Multi38RegressionSystem(GenericPredictionSystem):
 
         model = check_model(model)
 
-        optimizer = torch.optim.SGD(
+        # optimizer = torch.optim.SGD(
+        #     model.parameters(),
+        #     lr=self.lr,
+        #     weight_decay=self.weight_decay,
+        #     momentum=self.momentum,
+        #     nesterov=self.nesterov,
+        # )
+
+        optimizer = torch.optim.Adam(
             model.parameters(),
             lr=self.lr,
-            weight_decay=self.weight_decay,
-            momentum=self.momentum,
-            nesterov=self.nesterov,
+            weight_decay=self.weight_decay
         )
 
         if metrics is None:
@@ -367,7 +359,7 @@ class Multi38RegressionSystem(GenericPredictionSystem):
         # loss = nn.BCELoss()
 
         # MSE loss : 
-        # loss = nn.MSELoss()
+        loss = nn.MSELoss()
 
         
 
@@ -426,7 +418,7 @@ class RegressionSystem(Multi38RegressionSystem):
         # Check if the prediction are all positive (true or false) : 
         # print(f"Training Step - Batch {batch_idx}, positive predictions: {torch.sum(predictions >= 0)}, negative predictions: {torch.sum(predictions < 0)}")
         # Check if some prediction are > 1 : 
-        # print(f"Training Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
+        print(f"Training Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
 
     def validation_step(self, batch, batch_idx):
         inputs, targets = batch
@@ -435,7 +427,7 @@ class RegressionSystem(Multi38RegressionSystem):
         self.log('val_mle', self.metrics['mle'](predictions, targets))
         # print(f"Validation Step - Batch {batch_idx}: Predictions: {predictions}, Targets: {targets}")
         # print(f"Validation Step - Batch {batch_idx}, positive predictions: {torch.sum(predictions >= 0)}, negative predictions: {torch.sum(predictions < 0)}")
-        # print(f"Validation Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
+        print(f"Validation Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
 
 
 @hydra.main(version_base="1.1", config_path="conf", config_name="multi38_config")
@@ -480,13 +472,13 @@ def main(cfg: DictConfig) -> None:
         ModelCheckpoint(
             dirpath=os.getcwd(),
             filename="checkpoint-{epoch:02d}--{val_f1:.4f}",
-            monitor="val_mle",
-            mode="min",
+            monitor="val_mse",
+            mode="max",
         ),
     ]
 
     
-    wandb.init(project="deep-ocean", name = 'Target : Pseudo-nitzschia (with RELU) --> MLE + augmentation (rotation) (10 epochs)')
+    wandb.init(project="deep-ocean", name = 'Adam - Target : total plankton (with RELU)')
     print("Initializing trainer...")  # Debug print
 
     logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
@@ -502,14 +494,6 @@ def main(cfg: DictConfig) -> None:
     trainer.validate(model, datamodule=datamodule)
 
     wandb.finish()
-
-    
-
-    
-    
-    
-    
-    
     
 
 
@@ -539,7 +523,7 @@ def test(cfg: DictConfig) -> list:
 def last_checkpoint() -> str:
     
     cur_path = os.getcwd()
-    os.chdir('/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/training/')
+    os.chdir('/home/gaetan/multi38/outputs/multi38')
     avail = [str(p) for p in Path('.').glob('*/*.ckpt')]
     avail.sort()
     os.chdir(cur_path)

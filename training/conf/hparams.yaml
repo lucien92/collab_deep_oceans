@@ -10,9 +10,8 @@ model:
     weights: null
   modifiers:
     change_last_layer:
-      num_outputs: 38
+      num_outputs: 6
       flatten: false
-      softmax: true
     change_first_convolutional_layer:
       num_input_channels: 29
 optimizer:
