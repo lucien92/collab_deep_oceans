@@ -25,18 +25,7 @@ from malpolon.models import GenericPredictionSystem
 from malpolon.logging import Summary
 
 
-from transforms import RGBDataTransform
-
-from torchvision.transforms.functional import rotate
-
-class CustomRotationTransform:
-    """ Custom rotation transform to rotate image by one of the given angles. """
-    def __init__(self, angles):
-        self.angles = angles
-
-    def __call__(self, x):
-        angle = float(np.random.choice(self.angles))
-        return rotate(x, angle)
+from transforms import RGBDataTransform, CustomRotationTransform
 
 class Multi38Dataset(Dataset):
     """Pytorch dataset handler for a subset of GeoLifeCLEF 2022 dataset.
@@ -303,7 +292,14 @@ class MeanLogarithmicErrorLoss(nn.Module):
         absolute_errors = torch.abs(y_pred - y_true)
         max_values = torch.maximum(absolute_errors, torch.tensor(1.0))
         log_errors = torch.log10(max_values)
-        mean_log_error = torch.mean(log_errors)
+
+        # Adjust with weights (with log(1 + y_true))
+        one = torch.ones_like(y_true)
+        log_true = torch.log10(one + y_true)
+        weighted_log_errors = log_errors * log_true
+        mean_log_error = torch.mean(weighted_log_errors)
+
+        # mean_log_error = torch.mean(log_errors)
         
         return mean_log_error
 
@@ -479,19 +475,19 @@ def main(cfg: DictConfig) -> None:
         Summary(),
         ModelCheckpoint(
             dirpath=os.getcwd(),
-            filename="checkpoint-{epoch:02d}--{val_f1:.4f}",
+            filename="checkpoint-{epoch:02d}--{val_mle:.4f}",
             monitor="val_mle",
             mode="min",
-        ),
-    ]
+            ),
+        ]
 
     
     wandb.init(project="deep-ocean", name = 'Target : Pseudo-nitzschia (with RELU) --> MLE + augmentation (rotation) (10 epochs)')
     print("Initializing trainer...")  # Debug print
 
-    logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
+    WandB_logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
 
-    trainer = pl.Trainer(logger=logger, callbacks=callbacks, **cfg.trainer)
+    trainer = pl.Trainer(logger=[logger, WandB_logger], callbacks=callbacks, **cfg.trainer)
     print("")
     print("Starting training...")  # Debug print
     print("")

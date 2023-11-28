@@ -6,9 +6,10 @@ hydra:
 
 trainer:
   accelerator: "gpu"
-  max_epochs: 30
+  max_epochs: 10
   val_check_interval: 0.1
   gradient_clip_val: 0.2
+  # gradient_clip_val: 10000
 
 model:
   provider_name: "torchvision"
@@ -45,5 +46,5 @@ data:
 other:
   train_from_checkpoint: false
   ckpt_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/collab_deep_oceans/training/ckpt/"
-  ckpt_name: "2023-07-24_07-49-49/checkpoint-epoch=08--val_f1=0.6036.ckpt"
-  comment: "Removed time lag and without eke for interpretation study - continue training"
+  ckpt_name: "checkpoint.ckpt"
+  comment: "none"
