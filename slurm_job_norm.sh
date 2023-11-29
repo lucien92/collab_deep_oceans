@@ -14,7 +14,7 @@
 # source mypythonenv/bin/activate
 
 # Activate the venv : 
-source /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/deep-sdm-venv/bin/activate
+source /usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/deep-sdm-venv/bin/activate
 
 # Run your Python script
 python norm_data.py

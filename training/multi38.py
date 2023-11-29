@@ -77,9 +77,11 @@ class Multi38Dataset(Dataset):
         # self.species_index = {x['id']:int(x['index']) for x in species}
         
         if subset != "train+val":
-            ind = df.index[df["subset"] == subset]
+            # ind = df.index[df["subset"] == subset]
+            ind = df.index[df["subset_random"] == subset]
         else:
-            ind = df.index[np.isin(df["subset"], ["train", "val"])]
+            # ind = df.index[np.isin(df["subset"], ["train", "val"])]
+            ind = df.index[np.isin(df["subset_random"], ["train", "val"])]
         df = df.loc[ind]
 
         taxons = [
@@ -114,7 +116,8 @@ class Multi38Dataset(Dataset):
         species = self.targets[index]
 
         # Might need to be changed
-        patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm')
+        # patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm')
+        patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm-zero-fill')
 
         if self.transform:
             patches = self.transform(patches)
@@ -294,12 +297,12 @@ class MeanLogarithmicErrorLoss(nn.Module):
         log_errors = torch.log10(max_values)
 
         # Adjust with weights (with log(1 + y_true))
-        one = torch.ones_like(y_true)
-        log_true = torch.log10(one + y_true)
-        weighted_log_errors = log_errors * log_true
-        mean_log_error = torch.mean(weighted_log_errors)
+        # one = torch.ones_like(y_true)
+        # log_true = torch.log10(one + y_true)
+        # weighted_log_errors = log_errors * log_true
+        # mean_log_error = torch.mean(weighted_log_errors)
 
-        # mean_log_error = torch.mean(log_errors)
+        mean_log_error = torch.mean(log_errors)
         
         return mean_log_error
 
@@ -482,7 +485,7 @@ def main(cfg: DictConfig) -> None:
         ]
 
     
-    wandb.init(project="deep-ocean", name = 'Target : Pseudo-nitzschia (with RELU) --> MLE + augmentation (rotation) (10 epochs)')
+    wandb.init(project="deep-ocean", name = 'Random split - Target : Pseudo-nitzschia (with RELU) --> MLE + augmentation (rotation) (10 epochs) + zero fill + without penalty loss')
     print("Initializing trainer...")  # Debug print
 
     WandB_logger = WandbLogger(name="Target : total plankton", project="deep-ocean")

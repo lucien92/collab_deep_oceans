@@ -25,7 +25,7 @@ from malpolon.models import GenericPredictionSystem
 from malpolon.logging import Summary
 
 
-from transforms import RGBDataTransform
+from transforms import RGBDataTransform, CustomRotationTransform
 
 class Multi38Dataset(Dataset):
     """Pytorch dataset handler for a subset of GeoLifeCLEF 2022 dataset.
@@ -77,9 +77,11 @@ class Multi38Dataset(Dataset):
         # self.species_index = {x['id']:int(x['index']) for x in species}
         
         if subset != "train+val":
-            ind = df.index[df["subset"] == subset]
+            # ind = df.index[df["subset"] == subset]
+            ind = df.index[df["subset_random"] == subset]
         else:
-            ind = df.index[np.isin(df["subset"], ["train", "val"])]
+            # ind = df.index[np.isin(df["subset"], ["train", "val"])]
+            ind = df.index[np.isin(df["subset_random"], ["train", "val"])]
         df = df.loc[ind]
 
         taxons = [
@@ -95,7 +97,9 @@ class Multi38Dataset(Dataset):
         self.observation_ids = df.index
         # self.targets = df[taxons].values
         # Simpler task : 
-        self.targets = df['total plankton'].values
+        # self.targets = df['total plankton'].values
+        # Simpler task (only the)
+        self.targets = df['Pseudo-nitzschia'].values
 
         print("Shape of target:", self.targets.shape)  # Debug print
 
@@ -112,7 +116,8 @@ class Multi38Dataset(Dataset):
         species = self.targets[index]
 
         # Might need to be changed
-        patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm')
+        # patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm')
+        patches = self.load_patch(observation_id, self.root / 'npy' / 'plankton_med-npy-norm-zero-fill')
 
         if self.transform:
             patches = self.transform(patches)
@@ -220,7 +225,8 @@ class Multi38DataModule(BaseDataModule):
     def train_transform(self):
         return transforms.Compose(
             [
-                lambda data: RGBDataTransform()(data["25"])
+                lambda data: RGBDataTransform()(data["25"]),
+                CustomRotationTransform(angles=[0, 90, 180, 270])  # Add custom rotation
             ]
         )
 
@@ -289,7 +295,14 @@ class MeanLogarithmicErrorLoss(nn.Module):
         absolute_errors = torch.abs(y_pred - y_true)
         max_values = torch.maximum(absolute_errors, torch.tensor(1.0))
         log_errors = torch.log10(max_values)
-        mean_log_error = torch.mean(log_errors)
+
+        # Adjust with weights (with log(1 + y_true))
+        one = torch.ones_like(y_true)
+        log_true = torch.log10(one + y_true)
+        weighted_log_errors = log_errors * log_true
+        mean_log_error = torch.mean(weighted_log_errors)
+
+        # mean_log_error = torch.mean(log_errors)
         
         return mean_log_error
 
@@ -328,14 +341,6 @@ class Multi38RegressionSystem(GenericPredictionSystem):
 
         model = check_model(model)
 
-        # optimizer = torch.optim.SGD(
-        #     model.parameters(),
-        #     lr=self.lr,
-        #     weight_decay=self.weight_decay,
-        #     momentum=self.momentum,
-        #     nesterov=self.nesterov,
-        # )
-
         optimizer = torch.optim.Adam(
             model.parameters(),
             lr=self.lr,
@@ -359,7 +364,7 @@ class Multi38RegressionSystem(GenericPredictionSystem):
         # loss = nn.BCELoss()
 
         # MSE loss : 
-        loss = nn.MSELoss()
+        # loss = nn.MSELoss()
 
         
 
@@ -418,7 +423,7 @@ class RegressionSystem(Multi38RegressionSystem):
         # Check if the prediction are all positive (true or false) : 
         # print(f"Training Step - Batch {batch_idx}, positive predictions: {torch.sum(predictions >= 0)}, negative predictions: {torch.sum(predictions < 0)}")
         # Check if some prediction are > 1 : 
-        print(f"Training Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
+        # print(f"Training Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
 
     def validation_step(self, batch, batch_idx):
         inputs, targets = batch
@@ -427,7 +432,7 @@ class RegressionSystem(Multi38RegressionSystem):
         self.log('val_mle', self.metrics['mle'](predictions, targets))
         # print(f"Validation Step - Batch {batch_idx}: Predictions: {predictions}, Targets: {targets}")
         # print(f"Validation Step - Batch {batch_idx}, positive predictions: {torch.sum(predictions >= 0)}, negative predictions: {torch.sum(predictions < 0)}")
-        print(f"Validation Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
+        # print(f"Validation Step - Batch {batch_idx}, > 1 predictions: {torch.sum(predictions > 1)}")
 
 
 @hydra.main(version_base="1.1", config_path="conf", config_name="multi38_config")
@@ -471,19 +476,19 @@ def main(cfg: DictConfig) -> None:
         Summary(),
         ModelCheckpoint(
             dirpath=os.getcwd(),
-            filename="checkpoint-{epoch:02d}--{val_f1:.4f}",
-            monitor="val_mse",
-            mode="max",
-        ),
-    ]
+            filename="checkpoint-{epoch:02d}--{val_mle:.4f}",
+            monitor="val_mle",
+            mode="min",
+            ),
+        ]
 
     
-    wandb.init(project="deep-ocean", name = 'Adam - Target : total plankton (with RELU)')
+    wandb.init(project="deep-ocean", name = 'Random split - Target : Pseudo-nitzschia (with RELU) --> MLE + augmentation (rotation) (10 epochs) + zero fill')
     print("Initializing trainer...")  # Debug print
 
-    logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
+    WandB_logger = WandbLogger(name="Target : total plankton", project="deep-ocean")
 
-    trainer = pl.Trainer(logger=logger, callbacks=callbacks, **cfg.trainer)
+    trainer = pl.Trainer(logger=[logger, WandB_logger], callbacks=callbacks, **cfg.trainer)
     print("")
     print("Starting training...")  # Debug print
     print("")
@@ -494,6 +499,14 @@ def main(cfg: DictConfig) -> None:
     trainer.validate(model, datamodule=datamodule)
 
     wandb.finish()
+
+    
+
+    
+    
+    
+    
+    
     
 
 
@@ -523,7 +536,7 @@ def test(cfg: DictConfig) -> list:
 def last_checkpoint() -> str:
     
     cur_path = os.getcwd()
-    os.chdir('/home/gaetan/multi38/outputs/multi38')
+    os.chdir('/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/training/')
     avail = [str(p) for p in Path('.').glob('*/*.ckpt')]
     avail.sort()
     os.chdir(cur_path)

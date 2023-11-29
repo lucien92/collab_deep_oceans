@@ -27,7 +27,7 @@ model:
       num_input_channels: 8
 
 optimizer:
-  lr: 1e-3
+  lr: 1e-5
   weight_decay: 1e-4
   momentum: 0.9
   nesterov: true
@@ -36,7 +36,7 @@ optimizer:
 data:
   dataset_path: "/usr/users/sdi-labworks-2023-2024/sdi-labworks-2023-2024_24/project/collab_deep_oceans/"
   dataset_name: "plankton_data/planktons_med_filtered.csv"
-  train_batch_size: 256
+  train_batch_size: 512
   inference_batch_size: 32
   num_workers: 16
   ignore_indices : []
